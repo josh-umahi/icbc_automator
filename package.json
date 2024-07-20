@@ -1,14 +1,18 @@
 {
   "name": "icbc_automator",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "start": "ts-node src/index.ts"
   },
+  "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
-  "dependencies": {
-    "puppeteer": "^22.13.1"
+  "devDependencies": {
+    "@types/node": "^20.14.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
   }
 }
