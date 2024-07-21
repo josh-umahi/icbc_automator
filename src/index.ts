@@ -1,11 +1,13 @@
 import puppeteer from 'puppeteer';
+import path from 'path';
 import dotenv from 'dotenv';
+import { getCurrentTimestamp } from './utils';
 
 dotenv.config();
 
 (async () => {
   // Launch the browser and open a new blank page
-  const browser = await puppeteer.launch({ headless: false });
+  const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
 
   // Navigate the page to a URL
@@ -13,7 +15,7 @@ dotenv.config();
     'https://onlinebusiness.icbc.com/webdeas-ui/login;type=driver'
   );
 
-  await page.setViewport({ width: 1080, height: 2800 });
+  await page.setViewport({ width: 1080, height: 1000 });
 
   const driverNameSelector = '[aria-label="driver-name"]';
   const licenceNumberSelector = '[aria-label="driver-licence"]';
@@ -42,24 +44,43 @@ dotenv.config();
   await page.waitForSelector(yesRescheduleButtonSelector);
   await page.click(yesRescheduleButtonSelector);
 
-  await new Promise(resolve => setTimeout(resolve, 3000));
-  await page.screenshot({ path: 'screenshot1.png', fullPage: true });
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  // Define the selector for the div
-  const byOfficeSelector = '#mat-tab-label-15-1';
-
-  // Wait for the div to be available and visible
-  await page.waitForSelector(byOfficeSelector, {
-    visible: true,
-    timeout: 60000,
-  }); // Increased timeout to 60 seconds
-  console.log('Div is visible');
-
-  // Take a screenshot for debugging
-  await page.screenshot({ path: 'screenshot2.png', fullPage: true });
-  console.log('Screenshot taken');
-
-  // Click the div element
+  const byOfficeSelector =
+    '#search-location > mat-tab-header > div.mat-tab-label-container > div > div > div:nth-child(2)';
+  await page.waitForSelector(byOfficeSelector);
   await page.click(byOfficeSelector);
-  console.log('Div clicked');
+
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  const openDropDownSelector = 'input[placeholder="Start typing..."]';
+  await page.waitForSelector(openDropDownSelector);
+  await page.click(openDropDownSelector);
+
+  const officeSelector = 'input[placeholder="Start typing..."]';
+  await page.waitForSelector(officeSelector);
+  await page.click(officeSelector);
+  await page.type(officeSelector, process.env.MY_CITY!);
+
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
+  const specifiedOfficeSelector = '#mat-autocomplete-0 > mat-option';
+  await page.waitForSelector(specifiedOfficeSelector);
+  await page.click(specifiedOfficeSelector);
+
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+
+  const currentTimestamp = getCurrentTimestamp();
+  const screenshotPath = path.join(
+    __dirname,
+    'snapshots',
+    `${currentTimestamp}.png`
+  );
+  await page.screenshot({ path: screenshotPath, fullPage: true });
+
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+  
+  // const specifiedOfficeSelector = '.appointment-listings';
+  
+  // await browser.close();
 })();
