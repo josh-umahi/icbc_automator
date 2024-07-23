@@ -1,10 +1,10 @@
 {
   "name": "icbc_automator",
   "version": "1.0.0",
-  "main": "index.ts",
+  "main": "server.ts",
   "scripts": {
     "build": "tsc",
-    "start": "ts-node src/index.ts"
+    "start": "ts-node src/server.ts"
   },
   "keywords": [],
   "author": "",
@@ -12,11 +12,15 @@
   "description": "",
   "devDependencies": {
     "@types/node": "^20.14.11",
+    "@types/node-cron": "^3.0.11",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.3"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
+    "fastify": "^4.28.1",
+    "moment-timezone": "^0.5.45",
+    "node-cron": "^3.0.3",
     "puppeteer": "^22.13.1"
   }
 }

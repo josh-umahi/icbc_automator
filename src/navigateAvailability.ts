@@ -5,15 +5,18 @@ import { getCurrentTimestamp } from './utils';
 
 dotenv.config();
 
-(async () => {
+const navigateAvailability = async () => {
   // Launch the browser and open a new blank page
   const browser = await puppeteer.launch({ headless: true });
+  console.info('Browser launched: ' + getCurrentTimestamp());
+
   const page = await browser.newPage();
 
   // Navigate the page to a URL
   await page.goto(
     'https://onlinebusiness.icbc.com/webdeas-ui/login;type=driver'
   );
+  console.info('ICBC page launched: ' + getCurrentTimestamp());
 
   await page.setViewport({ width: 1080, height: 1000 });
 
@@ -43,6 +46,7 @@ dotenv.config();
   const yesRescheduleButtonSelector = 'button.primary.ng-star-inserted';
   await page.waitForSelector(yesRescheduleButtonSelector);
   await page.click(yesRescheduleButtonSelector);
+  console.info("Reschedule 'Yes' button clicked: " + getCurrentTimestamp());
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -50,6 +54,7 @@ dotenv.config();
     '#search-location > mat-tab-header > div.mat-tab-label-container > div > div > div:nth-child(2)';
   await page.waitForSelector(byOfficeSelector);
   await page.click(byOfficeSelector);
+  console.info("'By Office' button clicked: " + getCurrentTimestamp());
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -60,7 +65,8 @@ dotenv.config();
   const officeSelector = 'input[placeholder="Start typing..."]';
   await page.waitForSelector(officeSelector);
   await page.click(officeSelector);
-  await page.type(officeSelector, process.env.MY_CITY!);
+  await page.type(officeSelector, process.env.PREFERRED_OFFICE!);
+  console.info('Entered my preferred office: ' + getCurrentTimestamp());
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -77,10 +83,49 @@ dotenv.config();
     `${currentTimestamp}.png`
   );
   await page.screenshot({ path: screenshotPath, fullPage: true });
+  console.info('Snapshot saved: ' + getCurrentTimestamp());
 
   await new Promise((resolve) => setTimeout(resolve, 3000));
-  
-  // const specifiedOfficeSelector = '.appointment-listings';
-  
-  // await browser.close();
-})();
+
+  const officeTitleSelector = '#mat-dialog-title-0 > div.location-title';
+  const earliestDateSelector =
+    'div.appointment-listings > div.date-title:nth-child(1)';
+  const timesForEarliestDatesSelector =
+    'div.appointment-listings > mat-button-toggle > button > span';
+
+  const getTextContent = async (mySelector: any) => {
+    return await page.evaluate((selector) => {
+      const element = document.querySelector(selector);
+      return element ? element.textContent!.trim() : null;
+    }, mySelector);
+  };
+
+  const officeTitle = await getTextContent(officeTitleSelector);
+  const earliestDate = await getTextContent(earliestDateSelector);
+  const timesForEarliestDates = await page.evaluate((selector) => {
+    const elements = document.querySelectorAll(selector);
+    return Array.from(elements).map((element) =>
+      element ? element.textContent!.trim() : null
+    );
+  }, timesForEarliestDatesSelector);
+
+  const compareEarliestDateToWatchMonth = (
+    source: string,
+    target: string
+  ): boolean => {
+    return source.toLowerCase().includes(target.toLowerCase());
+  };
+  const isGoodDate = compareEarliestDateToWatchMonth(
+    earliestDate,
+    process.env.WATCH_MONTH!
+  );
+
+  console.info(officeTitle);
+  console.info(earliestDate);
+  console.info(timesForEarliestDates);
+  console.info(isGoodDate);
+
+  await browser.close();
+};
+
+export default navigateAvailability;
