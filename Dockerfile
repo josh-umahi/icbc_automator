@@ -10,6 +10,18 @@ COPY package*.json ./
 
 USER root
 
+# We don't need the standalone Chromium
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+
+# Install dependencies for Chromium and Puppeteer
+RUN apk update && apk add --no-cache \
+    chromium \
+    nss \
+    freetype \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont
+
 RUN chown -R app:app .
 
 USER app

@@ -7,8 +7,13 @@ dotenv.config();
 
 const navigateAvailability = async () => {
   // Launch the browser and open a new blank page
-  const browser = await puppeteer.launch({ headless: true });
-  console.info('Browser launched: ' + getCurrentTimestamp());
+  const browser = await puppeteer.launch({
+    headless: true,
+    defaultViewport: null,
+    executablePath: '/usr/bin/chromium-browser',
+    args: ['--no-sandbox'],
+  });
+  console.log('Browser launched: ' + getCurrentTimestamp());
 
   const page = await browser.newPage();
 
@@ -16,7 +21,7 @@ const navigateAvailability = async () => {
   await page.goto(
     'https://onlinebusiness.icbc.com/webdeas-ui/login;type=driver'
   );
-  console.info('ICBC page launched: ' + getCurrentTimestamp());
+  console.log('ICBC page launched: ' + getCurrentTimestamp());
 
   await page.setViewport({ width: 1080, height: 1000 });
 
@@ -46,7 +51,7 @@ const navigateAvailability = async () => {
   const yesRescheduleButtonSelector = 'button.primary.ng-star-inserted';
   await page.waitForSelector(yesRescheduleButtonSelector);
   await page.click(yesRescheduleButtonSelector);
-  console.info("Reschedule 'Yes' button clicked: " + getCurrentTimestamp());
+  console.log("Reschedule 'Yes' button clicked: " + getCurrentTimestamp());
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -54,7 +59,7 @@ const navigateAvailability = async () => {
     '#search-location > mat-tab-header > div.mat-tab-label-container > div > div > div:nth-child(2)';
   await page.waitForSelector(byOfficeSelector);
   await page.click(byOfficeSelector);
-  console.info("'By Office' button clicked: " + getCurrentTimestamp());
+  console.log("'By Office' button clicked: " + getCurrentTimestamp());
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -66,7 +71,7 @@ const navigateAvailability = async () => {
   await page.waitForSelector(officeSelector);
   await page.click(officeSelector);
   await page.type(officeSelector, process.env.PREFERRED_OFFICE!);
-  console.info('Entered my preferred office: ' + getCurrentTimestamp());
+  console.log('Entered my preferred office: ' + getCurrentTimestamp());
 
   await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -76,14 +81,14 @@ const navigateAvailability = async () => {
 
   await new Promise((resolve) => setTimeout(resolve, 3000));
 
-  const currentTimestamp = getCurrentTimestamp();
-  const screenshotPath = path.join(
-    __dirname,
-    'snapshots',
-    `${currentTimestamp}.png`
-  );
-  await page.screenshot({ path: screenshotPath, fullPage: true });
-  console.info('Snapshot saved: ' + getCurrentTimestamp());
+  // const currentTimestamp = getCurrentTimestamp();
+  // const screenshotPath = path.join(
+  //   __dirname,
+  //   'snapshots',
+  //   `${currentTimestamp}.png`
+  // );
+  // await page.screenshot({ path: screenshotPath, fullPage: true });
+  // console.log('Snapshot saved: ' + getCurrentTimestamp());
 
   await new Promise((resolve) => setTimeout(resolve, 3000));
 
@@ -120,10 +125,10 @@ const navigateAvailability = async () => {
     process.env.WATCH_MONTH!
   );
 
-  console.info(officeTitle);
-  console.info(earliestDate);
-  console.info(timesForEarliestDates);
-  console.info(isGoodDate);
+  console.log(officeTitle);
+  console.log(earliestDate);
+  console.log(timesForEarliestDates);
+  console.log(isGoodDate);
 
   await browser.close();
 };

@@ -6,14 +6,16 @@ const fastify = Fastify({
   logger: true,
 });
 
-// const cronMins = 10;
-// schedule(`*/${cronMins} * * * *`, navigateAvailability);
-// console.info(`Cron job started running: every ${cronMins} minutes`);
-
-schedule('*/5 * * * * *', () => {
-  console.log('Running cron job');
-  navigateAvailability();
+const cronMins = 15;
+schedule(`*/${cronMins} * * * *`, () => {
+  console.log(`Cron job started running: every ${cronMins} minutes`);
+  navigateAvailability;
 });
+
+// schedule('*/5 * * * * *', () => {
+//   console.log('Running cron job');
+//   navigateAvailability();
+// });
 
 const start = async () => {
   try {
