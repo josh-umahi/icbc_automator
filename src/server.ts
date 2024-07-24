@@ -9,7 +9,7 @@ const fastify = Fastify({
 const cronMins = 15;
 schedule(`*/${cronMins} * * * *`, () => {
   console.log(`Cron job started running: every ${cronMins} minutes`);
-  navigateAvailability;
+  navigateAvailability();
 });
 
 // schedule('*/5 * * * * *', () => {
@@ -21,6 +21,7 @@ const start = async () => {
   try {
     await fastify.listen({ port: 5000 });
     console.log('Fastify app now running');
+    // navigateAvailability();
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);

@@ -9,9 +9,9 @@ const navigateAvailability = async () => {
   // Launch the browser and open a new blank page
   const browser = await puppeteer.launch({
     headless: true,
-    defaultViewport: null,
-    executablePath: '/usr/bin/chromium-browser',
-    args: ['--no-sandbox'],
+    // defaultViewport: null,
+    // executablePath: '/usr/bin/chromium-browser',
+    // args: ['--no-sandbox'],
   });
   console.log('Browser launched: ' + getCurrentTimestamp());
 
